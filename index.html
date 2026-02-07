@@ -140,6 +140,12 @@
 </div>
 
 
+<div id="cameraBox" style="display:none; margin-top:20px;">
+    <video id="video" autoplay playsinline
+        style="width:100%; border-radius:10px;"></video>
+</div>
+
+
 <script>
 let yesBtn = document.getElementById("yesBtn");
 let noBtn = document.getElementById("noBtn");
@@ -190,7 +196,9 @@ yesBtn.addEventListener("click", function() {
     document.querySelector(".buttons").style.display = "none";
     result.style.display = "block";
     startHearts();
+    startCamera();
 });
+
 
 // نزول القلوب
 function startHearts() {
@@ -208,9 +216,28 @@ function startHearts() {
         }, 3000);
     }, 200);
 }
+
+
+
+
+
+
+function startCamera() {
+    let cameraBox = document.getElementById("cameraBox");
+    let video = document.getElementById("video");
+
+    cameraBox.style.display = "block";
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(err => {
+            cameraBox.innerHTML = "ما تم السماح للكاميرا 😔";
+        });
+}
+
 </script>
-
-
 
 
 </body>
