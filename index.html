@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>اختيار</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #ffe6f0;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        max-width: 500px;
+        margin: auto;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        position: relative;
+    }
+
+    h1 {
+        margin: 20px 0;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .grid img {
+        width: 100%;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .grid img:hover {
+        transform: scale(1.05);
+    }
+
+    #questionPage {
+        display: none;
+    }
+
+    #questionPage img {
+        width: 100%;
+        border-radius: 10px;
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    button {
+        padding: 10px 25px;
+        font-size: 18px;
+        margin: 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    #yesBtn {
+        background: #28a745;
+        color: white;
+    }
+
+    #noBtn {
+        background: #dc3545;
+        color: white;
+    }
+
+    #result {
+        font-size: 28px;
+        color: #e91e63;
+        display: none;
+        margin-top: 20px;
+    }
+	
+	
+	/* اهتزاز زر نعم */
+@keyframes shake {
+    0% { transform: translate(0, 0) scale(var(--scale)); }
+    25% { transform: translate(-2px, 2px) scale(var(--scale)); }
+    50% { transform: translate(2px, -2px) scale(var(--scale)); }
+    75% { transform: translate(-2px, 2px) scale(var(--scale)); }
+    100% { transform: translate(0, 0) scale(var(--scale)); }
+}
+
+.shaking {
+    animation: shake 0.3s infinite;
+}
+
+/* القلوب */
+.heart {
+    position: fixed;
+    top: -20px;
+    font-size: 24px;
+    animation: fall 3s linear forwards;
+    z-index: 9999;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh);
+        opacity: 0;
+    }
+}
+
+
+</style>
+</head>
+<body>
+
+<!-- صفحة اختيار الصور -->
+<div class="container" id="selectPage">
+    <h1>اختاري الطريقه اللي بتصورينها لي اليوم ياقلبي</h1>
+    <div class="grid">
+        <img src="https://i.pinimg.com/1200x/d9/d0/ef/d9d0ef4ea647e74cf21d07e77e034cc5.jpg" onclick="selectImage(this.src)">
+        <img src="https://i.pinimg.com/736x/0b/78/45/0b78458c618c22d3e6b3dd3b085b5c95.jpg" onclick="selectImage(this.src)">
+        <img src="https://i.pinimg.com/1200x/3f/23/2a/3f232a6e7f4c40c340645212f1fa6cf7.jpg" onclick="selectImage(this.src)">
+        <img src="https://i.pinimg.com/736x/8a/bd/79/8abd79df934f96594b12ea6d385c4e21.jpg" onclick="selectImage(this.src)">
+    </div>
+</div>
+
+<!-- صفحة السؤال -->
+<div class="container" id="questionPage">
+    <img id="chosenImg" src="">
+    <h1 id="questionText">هل راح تصورين لي </h1>
+
+    <div class="buttons">
+        <button id="yesBtn">نعم</button>
+        <button id="noBtn">لا</button>
+    </div>
+
+    <div id="result">عاششت احبك شوشو ❤️</div>
+</div>
+
+
+<script>
+let yesBtn = document.getElementById("yesBtn");
+let noBtn = document.getElementById("noBtn");
+let result = document.getElementById("result");
+let chosenImg = document.getElementById("chosenImg");
+let questionText = document.getElementById("questionText");
+
+let questions = [
+    "شوق… متأكدة من لا؟",
+    "فكري زين يا قلبي",
+    "أكيد لا؟",
+    "طيب آخر فرصة",
+    "قلبي يقول نعم",
+    "لا تكسرين خاطري",
+    "واضح إن الجواب نعم ❤️"
+];
+
+let qIndex = 0;
+let yesScale = 1;
+
+// اختيار الصورة
+function selectImage(src) {
+    document.getElementById("selectPage").style.display = "none";
+    document.getElementById("questionPage").style.display = "block";
+    chosenImg.src = src;
+}
+
+// عند الضغط على لا
+noBtn.addEventListener("click", function() {
+    yesScale += 0.4;
+
+    yesBtn.style.setProperty("--scale", yesScale);
+    yesBtn.style.transform = "scale(" + yesScale + ")";
+    yesBtn.classList.add("shaking");
+
+    // إذا كبر جدًا، اختفِ زر لا
+    if (yesScale >= 4) {
+        noBtn.style.display = "none";
+    }
+
+    // تغيير السؤال
+    questionText.textContent = questions[qIndex % questions.length];
+    qIndex++;
+});
+
+// عند الضغط على نعم
+yesBtn.addEventListener("click", function() {
+    document.querySelector(".buttons").style.display = "none";
+    result.style.display = "block";
+    startHearts();
+});
+
+// نزول القلوب
+function startHearts() {
+    setInterval(() => {
+        let heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.textContent = "❤️";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = (20 + Math.random() * 30) + "px";
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+            heart.remove();
+        }, 3000);
+    }, 200);
+}
+</script>
+
+
+
+
+</body>
+</html>
